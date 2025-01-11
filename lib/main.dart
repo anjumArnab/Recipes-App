@@ -1,4 +1,4 @@
-import 'package:company_app/Screens/home_screen.dart';
+import 'package:company_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {

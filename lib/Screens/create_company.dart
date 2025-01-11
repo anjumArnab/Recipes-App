@@ -1,7 +1,9 @@
+import 'dart:io';
+import 'package:company_app/utils/image_pick.dart';
 import 'package:flutter/material.dart';
 
 class CreateCompany extends StatefulWidget {
-   final String? name;
+  final String? name;
   final String? address;
   final String? phone;
   final bool isEditing;
@@ -14,7 +16,6 @@ class CreateCompany extends StatefulWidget {
     this.isEditing = false,
   });
 
-
   @override
   State<CreateCompany> createState() => _CreateCompanyState();
 }
@@ -24,11 +25,7 @@ class _CreateCompanyState extends State<CreateCompany> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final GlobalKey<FormState> _key = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  File? _selectedImage;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +34,9 @@ class _CreateCompanyState extends State<CreateCompany> {
         backgroundColor: Colors.blue.shade300,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title: Text(widget.isEditing ? "Update Company Information" : "Add Company Information"),
+        title: Text(
+          widget.isEditing ? "Update Company Information" : "Add Company Information",
+        ),
       ),
       body: Form(
         key: _key,
@@ -47,24 +46,81 @@ class _CreateCompanyState extends State<CreateCompany> {
               const SizedBox(height: 15),
               Center(
                 child: GestureDetector(
-                  onTap: () {
-                    // Handle upload action here
+                  onTap: () async {
+                    // Show dialog for choosing camera or gallery
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Select Image"),
+                          content: const Text("Choose an option to upload your image."),
+                          actions: [
+                            TextButton(
+                              onPressed: () async {
+                                // Close the dialog first
+                                Navigator.pop(context);
+
+                                // Create an instance of ImagePickerHelper
+                                final imageHelper = ImagePickerHelper();
+
+                                // Capture image from camera
+                                await imageHelper.captureImageFromCamera(context);
+                                setState(() {
+                                  _selectedImage = imageHelper.selectedImage; // Update the image
+                                });
+                              },
+                              child: const Text("Camera"),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                // Close the dialog first
+                                Navigator.pop(context);
+
+                                // Create an instance of ImagePickerHelper
+                                final imageHelper = ImagePickerHelper();
+
+                                // Pick image from gallery
+                                await imageHelper.pickImageFromGallery(context);
+                                setState(() {
+                                  _selectedImage = imageHelper.selectedImage; // Update the image
+                                });
+                              },
+                              child: const Text("Gallery"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context); // Close dialog without action
+                              },
+                              child: const Text("Cancel"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ClipOval(
                         child: Container(
-                          color: Colors.blueAccent.withOpacity(0.2), // Background color
-                          width: 75, // Width of the oval
-                          height: 75, // Height of the oval
-                          child: const Icon(
-                            Icons.camera_alt, // Camera icon
-                            size: 30,
-                            color: Colors.blue, // Icon color
-                          ),
+                          color: Colors.blueAccent.withOpacity(0.2),
+                          width: 75,
+                          height: 75,
+                          child: _selectedImage == null
+                              ? const Icon(
+                                  Icons.camera_alt,
+                                  size: 30,
+                                  color: Colors.blue,
+                                )
+                              : Image.file(
+                                  _selectedImage!,
+                                  fit: BoxFit.cover,
+                                  width: 75,
+                                  height: 75,
+                                ),
                         ),
                       ),
+                      const SizedBox(height: 8),
                     ],
                   ),
                 ),
@@ -77,12 +133,14 @@ class _CreateCompanyState extends State<CreateCompany> {
                     if (value!.isEmpty) {
                       return "Please enter company name";
                     }
+                    return null;
                   },
                   controller: _nameController,
                   decoration: const InputDecoration(
-                      labelText: "Name",
-                      hintText: "Enter the company name",
-                      border: OutlineInputBorder()),
+                    labelText: "Name",
+                    hintText: "Enter the company name",
+                    border: OutlineInputBorder(),
+                  ),
                 ),
               ),
               Padding(
@@ -90,9 +148,10 @@ class _CreateCompanyState extends State<CreateCompany> {
                 child: TextFormField(
                   controller: _addressController,
                   decoration: const InputDecoration(
-                      labelText: "Address",
-                      hintText: "Enter the company address",
-                      border: OutlineInputBorder()),
+                    labelText: "Address",
+                    hintText: "Enter the company address",
+                    border: OutlineInputBorder(),
+                  ),
                 ),
               ),
               Padding(
@@ -100,45 +159,48 @@ class _CreateCompanyState extends State<CreateCompany> {
                 child: TextFormField(
                   controller: _phoneController,
                   decoration: const InputDecoration(
-                      labelText: "Phone Number",
-                      hintText: "Enter the company phone number",
-                      border: OutlineInputBorder()),
+                    labelText: "Phone Number",
+                    hintText: "Enter the company phone number",
+                    border: OutlineInputBorder(),
+                  ),
                 ),
               ),
               const SizedBox(height: 15),
               Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_key.currentState!.validate()) {
+                        // Handle form submission
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.blue.shade300, // Button background color
-                      foregroundColor: Colors.white, // Text color
-                      fixedSize: const Size(200, 50), // Fixed size for width and height
+                      backgroundColor: Colors.blue.shade300,
+                      foregroundColor: Colors.white,
+                      fixedSize: const Size(200, 50),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(10), // Rounded corners
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(widget.isEditing ?  "Update Information" : "Create Company"),
+                    child: Text(widget.isEditing ? "Update Information" : "Create Company"),
                   ),
                   const SizedBox(height: 30.0),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Handle saving to database
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.blue.shade300, // Button background color
-                      foregroundColor: Colors.white, // Text color
-                      fixedSize: const Size(200, 50), // Same size as the first button
+                      backgroundColor: Colors.blue.shade300,
+                      foregroundColor: Colors.white,
+                      fixedSize: const Size(200, 50),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(10), // Rounded corners
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     child: const Text("Save To Database"),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
