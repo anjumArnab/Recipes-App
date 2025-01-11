@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:company_app/model/company_model.dart';
 import 'package:http/http.dart' as http;
 
-// https://retoolapi.dev/H1Ohqj/company
-
 class ApiServices {
   final String baseUrl = 'https://retoolapi.dev/H1Ohqj/company';
 
