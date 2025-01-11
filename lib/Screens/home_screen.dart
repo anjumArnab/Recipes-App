@@ -65,20 +65,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(12.0),
                     child: Row(
                       children: [
-                        // Company Logo
                         CircleAvatar(
                           radius: 30,
                           backgroundImage:
-                              NetworkImage(company.logo), // Set company logo
+                              NetworkImage(company.logo),
                         ),
                         const SizedBox(width: 12),
-                        // Company Details
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                company.companyName, // Display company name
+                                company.companyName,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -86,14 +84,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(company
-                                  .companyNumber), // Display company number
+                                  .companyNumber),
                               const SizedBox(height: 4),
                               Text(company
-                                  .companyAddress), // Display company address
+                                  .companyAddress),
                             ],
                           ),
                         ),
-                        // Action Buttons
+
                         Row(
                           children: [
                             IconButton(
@@ -105,11 +103,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                       name: company.companyName,
                                       address: company.companyAddress,
                                       phone: company.companyNumber,
-                                      logo: company.logo, // changes to be made
+                                      logo: company.logo,
                                       isEditing: true,
                                     ),
                                   ),
-                                );
+                                ).then((_) {
+                                  setState(() {
+                                    futureCompanies = ApiServices()
+                                        .getCompanies(); // Refresh data after editing
+                                  });
+                                });
                               },
                               icon: const Icon(
                                 Icons.edit,
@@ -123,12 +126,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                   builder: (context) {
                                     return AlertDialog(
                                       title: const Text(
-                                        "Are you sure you want to delete this company?",
-                                      ),
+                                          "Are you sure you want to delete this company?"),
                                       actions: [
                                         ElevatedButton(
-                                          onPressed: () {
-                                            // Handle delete logic here
+                                          onPressed: () async {
+                                            try {
+                                              await ApiServices()
+                                                  .deleteCompany(company.id);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                    content: Text(
+                                                        'Company deleted successfully')),
+                                              );
+                                              setState(() {
+                                                futureCompanies = ApiServices()
+                                                    .getCompanies();
+                                              });
+                                              Navigator.pop(context);
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text('Error: $e')),
+                                              );
+                                            }
                                           },
                                           child: const Text("Yes"),
                                         ),
@@ -172,11 +194,11 @@ class _HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(
                 builder: (_) => const CreateCompany(
-                  name: '', // Empty value for name
-                  address: '', // Empty value for address
-                  phone: '', // Empty value for phone number
-                  logo: '', // Empty value for logo
-                  isEditing: false, // Indicates that this is not an edit action
+                  name: '',
+                  address: '',
+                  phone: '',
+                  logo: '',
+                  isEditing: false,
                 ),
               ),
             );
