@@ -17,7 +17,7 @@ class Company extends StatelessWidget {
         textTheme: GoogleFonts.latoTextTheme()
       ),
       title: "Recipe App",
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
