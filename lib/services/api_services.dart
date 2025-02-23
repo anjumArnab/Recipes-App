@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:company_app/model/auth_response.dart';
 import 'package:company_app/model/auth_user.dart';
+import 'package:company_app/model/recipe.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -39,6 +40,24 @@ Future<AuthUser?> getCurrentUser(String accessToken) async {
 
     if (response.statusCode == 200) {
       return AuthUser.fromJson(jsonDecode(response.body));
+    } else {
+      return null;
+    }
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<List<Recipe>?> getRecipe() async {
+  try {
+    final url = Uri.parse('https://dummyjson.com/recipes');
+    final response = await http.get(url);
+    
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      return (jsonResponse['recipes'] as List)
+          .map((recipe) => Recipe.fromJson(recipe))
+          .toList();
     } else {
       return null;
     }
