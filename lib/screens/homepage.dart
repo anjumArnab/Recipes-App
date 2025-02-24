@@ -110,14 +110,14 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               onChanged: (value) {
-                  if (value.isNotEmpty) {
-                    searchRecipe(value);
-                  } else {
-                    setState(() {
-                      _recipeFuture = fetchRecipeInfo();
-                    });
-                  }
-                },
+                if (value.isNotEmpty) {
+                  searchRecipe(value);
+                } else {
+                  setState(() {
+                    _recipeFuture = fetchRecipeInfo();
+                  });
+                }
+              },
             ),
             const SizedBox(height: 5),
             AnimatedContainer(
@@ -156,7 +156,6 @@ class _HomePageState extends State<HomePage> {
                     )
                   : const SizedBox.shrink(),
             ),
-
             const SizedBox(height: 5),
             Expanded(
               child: Recipes(
@@ -219,15 +218,14 @@ class RecipeGrid extends StatelessWidget {
         itemBuilder: (context, index) {
           final recipe = recipes[index];
           return Transform.scale(
-  scale: 1.0, // Reduces size to half
-  child: RecipeCard(
-    image: recipe.image,
-    name: recipe.name,
-    cuisine: recipe.cuisine,
-    difficulty: recipe.difficulty,
-  ),
-);
-
+            scale: 1.0,
+            child: RecipeCard(
+              image: recipe.image,
+              name: recipe.name,
+              cuisine: recipe.cuisine,
+              difficulty: recipe.difficulty,
+            ),
+          );
         },
       ),
     );
