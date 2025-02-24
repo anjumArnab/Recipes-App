@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:company_app/model/recipe.dart';
 import 'package:company_app/services/api_services.dart';
 import 'package:company_app/widgets/recipe_card.dart';
-import 'package:flutter/material.dart';
 import 'package:company_app/model/auth_user.dart';
 import 'package:company_app/widgets/custome_drawer.dart';
 
@@ -38,20 +38,44 @@ class _HomePageState extends State<HomePage> {
 
   late Future<List<Recipe>?> _recipeFuture;
   TextEditingController searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  bool _showCategories = true;
 
   @override
   void initState() {
     super.initState();
     _recipeFuture = fetchRecipeInfo();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels <= 10) {
+        if (!_showCategories) {
+          setState(() {
+            _showCategories = true;
+          });
+        }
+      } else {
+        if (_showCategories) {
+          setState(() {
+            _showCategories = false;
+          });
+        }
+      }
+    });
   }
 
   Future<List<Recipe>?> fetchRecipeInfo() async {
     try {
-      final recipes = await getRecipe(); // Ensure getRecipe() returns List<Recipe>
+      final recipes = await getRecipe();
       return recipes;
     } catch (e) {
       return null;
     }
+  }
+
+  Future<void> searchRecipe(String keyword) async {
+    setState(() {
+      _recipeFuture = fetchRecipes(keyword);
+    });
   }
 
   @override
@@ -66,12 +90,12 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             const Text(
               'What Do You Want To Cook Today?',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             TextField(
               controller: searchController,
               autofocus: true,
@@ -85,60 +109,58 @@ class _HomePageState extends State<HomePage> {
                   borderSide: BorderSide.none,
                 ),
               ),
-              onChanged: (_) {},
-            ),
-            const SizedBox(height: 20),
-
-            // Categories Section
-            Expanded(
-              flex: 2,
-              child: PageView.builder(
-                itemCount: (categories.length / 8).ceil(),
-                controller: PageController(viewportFraction: 1),
-                itemBuilder: (context, pageIndex) {
-                  int startIndex = pageIndex * 8;
-                  int endIndex = (startIndex + 8) > categories.length
-                      ? categories.length
-                      : startIndex + 8;
-                  List<Map<String, String>> pageItems =
-                      categories.sublist(startIndex, endIndex);
-                  return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: pageItems.length,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            pageItems[index]['icon']!,
-                            style: const TextStyle(fontSize: 30),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            pageItems[index]['label']!,
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.black87),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+              onChanged: (value) {
+                  if (value.isNotEmpty) {
+                    searchRecipe(value);
+                  } else {
+                    setState(() {
+                      _recipeFuture = fetchRecipeInfo();
+                    });
+                  }
                 },
-              ),
+            ),
+            const SizedBox(height: 5),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: _showCategories ? 100 : 0,
+              child: _showCategories
+                  ? SizedBox(
+                      height: 80,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: categories.map((category) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    category['icon']!,
+                                    style: const TextStyle(fontSize: 30),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    category['label']!,
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
 
-            const SizedBox(height: 20),
-
-            // Recipes Section
+            const SizedBox(height: 5),
             Expanded(
-              flex: 5,
-              child: Recipes(future: _recipeFuture),
+              child: Recipes(
+                  future: _recipeFuture, scrollController: _scrollController),
             ),
           ],
         ),
@@ -147,11 +169,12 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Recipes Widget with FutureBuilder Inside
 class Recipes extends StatelessWidget {
   final Future<List<Recipe>?> future;
+  final ScrollController scrollController;
 
-  const Recipes({super.key, required this.future});
+  const Recipes(
+      {super.key, required this.future, required this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -165,39 +188,46 @@ class Recipes extends StatelessWidget {
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text('No recipes found'));
         } else {
-          return RecipeGrid(recipes: snapshot.data!);
+          return RecipeGrid(
+              recipes: snapshot.data!, scrollController: scrollController);
         }
       },
     );
   }
 }
 
-// GridView to Display Recipes
 class RecipeGrid extends StatelessWidget {
   final List<Recipe> recipes;
+  final ScrollController scrollController;
 
-  const RecipeGrid({super.key, required this.recipes});
+  const RecipeGrid(
+      {super.key, required this.recipes, required this.scrollController});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
+        controller: scrollController,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
-          childAspectRatio: 0.7,
+          crossAxisSpacing: 5.0,
+          mainAxisSpacing: 5.0,
+          childAspectRatio: 1.4,
         ),
         itemCount: recipes.length,
         itemBuilder: (context, index) {
           final recipe = recipes[index];
-          return RecipeCard(
-            image: recipe.image,
-            name: recipe.name,
-            cuisine: recipe.cuisine,
-            difficulty: recipe.difficulty,
-          );
+          return Transform.scale(
+  scale: 1.0, // Reduces size to half
+  child: RecipeCard(
+    image: recipe.image,
+    name: recipe.name,
+    cuisine: recipe.cuisine,
+    difficulty: recipe.difficulty,
+  ),
+);
+
         },
       ),
     );
