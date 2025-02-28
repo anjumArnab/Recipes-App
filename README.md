@@ -1,10 +1,15 @@
-# Company Management App
+# Recipe App
 
-A Flutter app for managing company details with CRUD operations using REST API, local database, and Image Picker.
+Recipe App is a simple API integration project that fetches recipe data from [DummyJSON](https://dummyjson.com/docs/recipes). It allows users to retrieve all recipes, search for specific recipes, and sort results by title in ascending or descending order.
 
 ## Features
 
-- Add, update, delete, and view company details
-- Store company data in a local database
-- Upload and display company logos using Image Picker
-- Integrate REST API for CRUD operations
+- **Get All Recipes**: Fetch and display a list of all available recipes.
+- **Search Recipes**: Find specific recipes by entering a search query.
+- **Sorting**: Sort recipes by title in ascending or descending order.
+
+## API Endpoints Used
+
+- **Get all recipes**: `https://dummyjson.com/recipes`
+- **Search recipes**: `https://dummyjson.com/recipes/search?q={query}`
+- **Sorting**: `https://dummyjson.com/recipes?sortBy={name}&order={order}`
