@@ -1,3 +1,4 @@
+import 'package:company_app/utils/modal_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:company_app/model/recipe.dart';
 import 'package:company_app/services/api_services.dart';
@@ -16,6 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  
   final List<Map<String, String>> categories = [
     {'icon': '🍕', 'label': 'Italian'},
     {'icon': '🥡', 'label': 'Asian'},
@@ -219,11 +221,21 @@ class RecipeGrid extends StatelessWidget {
           final recipe = recipes[index];
           return Transform.scale(
             scale: 1.0,
-            child: RecipeCard(
-              image: recipe.image,
-              name: recipe.name,
-              cuisine: recipe.cuisine,
-              difficulty: recipe.difficulty,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecipeScreen(recipe: recipe),
+                  ),
+                );
+              },
+              child: RecipeCard(
+                image: recipe.image,
+                name: recipe.name,
+                cuisine: recipe.cuisine,
+                difficulty: recipe.difficulty,
+              ),
             ),
           );
         },
