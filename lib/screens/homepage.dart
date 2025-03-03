@@ -17,7 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
   final List<Map<String, String>> categories = [
     {'icon': '🍕', 'label': 'Italian'},
     {'icon': '🥡', 'label': 'Asian'},
@@ -80,6 +79,13 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<List<Recipe>?> loadRecipesByTag(String tag) async {
+    setState(() {
+      _recipeFuture = fetchRecipesByTag(tag);
+    });
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,21 +141,26 @@ class _HomePageState extends State<HomePage> {
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    category['icon']!,
-                                    style: const TextStyle(fontSize: 30),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    category['label']!,
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ],
+                              child: GestureDetector(
+                                onTap: () {
+                                  loadRecipesByTag(category['label']!);
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      category['icon']!,
+                                      style: const TextStyle(fontSize: 30),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      category['label']!,
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           }).toList(),
