@@ -4,7 +4,7 @@ import 'package:company_app/model/recipe.dart';
 import 'package:company_app/services/api_services.dart';
 import 'package:company_app/widgets/recipe_card.dart';
 import 'package:company_app/model/auth_user.dart';
-import 'package:company_app/widgets/custome_drawer.dart';
+import 'package:company_app/widgets/custom_drawer.dart';
 
 class HomePage extends StatefulWidget {
   final AuthUser user;

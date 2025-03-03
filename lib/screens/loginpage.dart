@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:company_app/screens/homepage.dart';
-import 'package:company_app/widgets/custome_button.dart';
+import 'package:company_app/widgets/custom_button.dart';
 import 'package:company_app/services/api_services.dart';
 
 class LoginPage extends StatefulWidget {
