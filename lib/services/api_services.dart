@@ -84,3 +84,22 @@ Future<List<Recipe>?> fetchRecipes(String query) async {
     return null;
   }
 }
+
+Future<List<Recipe>?> fetchRecipesByTag(String tag) async {
+  final url = Uri.parse('https://dummyjson.com/recipes/tag/$tag');
+
+  try {
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      RecipeResponse recipeResponse = RecipeResponse.fromJson(data);
+      return recipeResponse.recipes;
+    } else {
+      throw Exception('Failed to load recipes');
+    }
+  } catch (e) {
+    print('Error fetching recipes: $e');
+    return null;
+  }
+}
