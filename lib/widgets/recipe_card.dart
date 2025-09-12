@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 class RecipeCard extends StatelessWidget {
@@ -20,7 +22,7 @@ class RecipeCard extends StatelessWidget {
       margin: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.black, width: 1.5),
+        border: Border.all(color: Colors.deepOrangeAccent, width: 1.0),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -39,17 +41,17 @@ class RecipeCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min, // Adjusts to content size
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       name,
                       style: const TextStyle(
-                        fontSize: 13, // Reduced font size
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),

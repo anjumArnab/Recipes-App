@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -21,13 +23,21 @@ class CustomButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.orange.withOpacity(0.7),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        backgroundColor: Colors.deepOrangeAccent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+        minimumSize: const Size(double.infinity, 50),
+        elevation: 2,
       ),
-      child: Text(text, style: TextStyle(
+      child: Text(
+        text,
+        style: TextStyle(
           color: textColor,
           fontWeight: fontWeight,
-        ),),
+          fontSize: 16,
+        ),
+      ),
     );
   }
 }
