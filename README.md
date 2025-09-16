@@ -13,3 +13,8 @@ Recipe App is a simple API integration project that fetches recipe data from [Du
 - **Get all recipes**: `https://dummyjson.com/recipes`
 - **Search recipes**: `https://dummyjson.com/recipes/search?q={query}`
 - **Sorting**: `https://dummyjson.com/recipes?sortBy={name}&order={order}`
+
+## Screenshots
+
+![Homepage](assets/t01.png)
+![Recipe](assets/t02.png)
