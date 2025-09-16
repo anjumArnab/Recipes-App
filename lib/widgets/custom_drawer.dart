@@ -14,9 +14,6 @@ class CustomDrawer extends StatelessWidget {
       child: Column(
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -31,6 +28,7 @@ class CustomDrawer extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         )
                       : null,
@@ -39,7 +37,7 @@ class CustomDrawer extends StatelessWidget {
                 Text(
                   '${user.firstName} ${user.lastName}',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -47,7 +45,7 @@ class CustomDrawer extends StatelessWidget {
                 Text(
                   user.email ?? '',
                   style: const TextStyle(
-                    color: Colors.white70,
+                    color: Colors.black,
                     fontSize: 14,
                   ),
                 ),
@@ -58,13 +56,6 @@ class CustomDrawer extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                ListTile(
-                  leading: const Icon(Icons.home),
-                  title: const Text('Home'),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
                 ListTile(
                   leading: const Icon(Icons.favorite),
                   title: const Text('Favorites'),
